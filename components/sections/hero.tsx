@@ -56,10 +56,8 @@ export function Hero() {
           {...reveal(0.08)}
           className="max-w-4xl text-[clamp(3rem,5.35vw,5.25rem)] font-medium leading-[0.97] tracking-[-0.075em] text-foreground"
         >
-          <span className="block">Digital products, built with clarity.</span>
-          <span className="mt-2 block text-accent">
-            Web, mobile, and cloud.
-          </span>
+          <span className="block">Built by the people</span>
+          <span className="mt-2 block text-accent">you actually talk to.</span>
         </motion.h1>
 
         <motion.p

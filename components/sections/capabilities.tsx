@@ -102,11 +102,11 @@ export function Capabilities() {
             <div>
               <p className="text-sm text-muted-foreground">Web development</p>
               <h3 className="mt-5 max-w-md text-3xl font-medium tracking-[-0.05em] text-foreground sm:text-4xl">
-                Web experiences that stay fast as they grow
+                Web platforms built for the next release
               </h3>
               <p className="mt-5 max-w-md text-sm leading-6 text-muted-foreground">
-                Marketing sites, customer portals, and enterprise web platforms
-                built around clear content and reliable performance.
+                From marketing sites to enterprise platforms, we make the
+                structure, content, and performance work together.
               </p>
             </div>
             <WebSurface />
@@ -126,11 +126,11 @@ export function Capabilities() {
         <SpotlightCard className="min-h-[17rem] bg-surface-elevated p-6 sm:p-8">
           <p className="text-sm text-muted-foreground">Mobile app development</p>
           <h3 className="mt-4 text-2xl font-medium tracking-[-0.05em] text-foreground">
-            Mobile apps with a clear product feel
+            Mobile apps with a clear path from screen to screen
           </h3>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            iOS, Android, React Native, and Flutter delivery for focused mobile
-            products.
+            We shape the core flows and build the app for iOS, Android, React
+            Native, or Flutter.
           </p>
           <MobileSurface />
         </SpotlightCard>
@@ -138,11 +138,11 @@ export function Capabilities() {
         <SpotlightCard className="min-h-[17rem] bg-surface-soft p-6 sm:p-8">
           <p className="text-sm text-muted-foreground">Cloud and API engineering</p>
           <h3 className="mt-4 text-2xl font-medium tracking-[-0.05em] text-foreground">
-            Cloud foundations that stay understandable
+            APIs and infrastructure without the black box
           </h3>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
-            Infrastructure, APIs, and integrations planned for a product that
-            needs to move without unnecessary complexity.
+            Clear APIs, infrastructure, and integrations for products that need
+            to move without unnecessary complexity.
           </p>
           <div className="mt-8 space-y-2 font-mono text-xs text-muted-foreground">
             <div className="flex justify-between border-b border-border pb-2">
@@ -163,7 +163,7 @@ export function Capabilities() {
         <SpotlightCard className="min-h-[17rem] bg-surface-warm p-6 sm:p-8 md:col-span-2 lg:col-span-2">
           <p className="text-sm text-muted-foreground">Technical consulting</p>
           <h3 className="mt-4 max-w-xl text-2xl font-medium tracking-[-0.05em] text-foreground sm:text-3xl">
-            A practical technical path forward
+            Turn technical complexity into a clear next move
           </h3>
           <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground">
             Architecture reviews, legacy modernization, and product strategy

@@ -13,7 +13,7 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: {
-    default: "RootPath | Digital products, built with clarity",
+    default: "RootPath | Small-team digital engineering",
     template: "%s | RootPath",
   },
   description:
