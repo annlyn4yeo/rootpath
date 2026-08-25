@@ -70,9 +70,8 @@ export function Process() {
             Clear thinking, close collaboration, careful delivery.
           </h2>
           <p className="mt-6 max-w-md text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">
-            A small team keeps the work close. You speak directly with the
-            people making the technical decisions, from first conversation
-            through handoff.
+            The work stays close. You speak directly with the people making
+            the technical decisions, from first conversation through handoff.
           </p>
           <Button
             type="button"
