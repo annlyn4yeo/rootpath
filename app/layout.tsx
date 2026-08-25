@@ -11,6 +11,13 @@ const geist = Geist({
   display: "swap",
 });
 
+const themeScript = `(() => {
+  try {
+    const storedTheme = window.localStorage.getItem("rootpath-theme");
+    document.documentElement.dataset.theme = storedTheme === "dark" ? "dark" : "light";
+  } catch {}
+})();`;
+
 export const metadata: Metadata = {
   title: {
     default: "RootPath | Small-team digital engineering",
@@ -27,6 +34,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-theme="light" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className={cn(
           geist.variable,

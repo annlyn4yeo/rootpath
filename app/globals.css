@@ -51,24 +51,24 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #12171c;
-  --foreground: #eff3f6;
-  --surface: #1b252c;
-  --surface-elevated: #222f38;
-  --surface-tint: #273a67;
-  --surface-soft: #21343a;
-  --surface-warm: #3a3028;
-  --border: rgb(239 243 246 / 0.14);
-  --border-strong: rgb(239 243 246 / 0.24);
-  --muted-foreground: #aebac2;
-  --muted-subtle: #82919b;
-  --accent: #90a9ff;
-  --accent-rgb: 144 169 255;
-  --accent-strong: #adc0ff;
-  --accent-soft: rgb(144 169 255 / 0.14);
-  --accent-foreground: #101a3b;
-  --ring: #90a9ff;
-  --shadow-rgb: 6 12 18;
+  --background: #15191d;
+  --foreground: #f1f3f4;
+  --surface: #20262b;
+  --surface-elevated: #293137;
+  --surface-tint: #263b58;
+  --surface-soft: #203937;
+  --surface-warm: #403229;
+  --border: rgb(241 243 244 / 0.14);
+  --border-strong: rgb(241 243 244 / 0.25);
+  --muted-foreground: #b1bbc1;
+  --muted-subtle: #849198;
+  --accent: #9eb6ff;
+  --accent-rgb: 158 182 255;
+  --accent-strong: #b7c8ff;
+  --accent-soft: rgb(158 182 255 / 0.15);
+  --accent-foreground: #17213e;
+  --ring: #9eb6ff;
+  --shadow-rgb: 4 8 12;
 }
 
 * {
@@ -78,6 +78,13 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
+}
+
+html.theme-transition,
+html.theme-transition body {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 220ms;
+  transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 body {
@@ -108,5 +115,10 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  html.theme-transition,
+  html.theme-transition body {
+    transition-duration: 0ms;
   }
 }
