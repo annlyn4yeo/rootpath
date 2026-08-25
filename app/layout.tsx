@@ -13,11 +13,11 @@ const geist = Geist({
 
 export const metadata: Metadata = {
   title: {
-    default: "RootPath | Digital systems, built with intent",
+    default: "RootPath | Digital products, built with clarity",
     template: "%s | RootPath",
   },
   description:
-    "RootPath builds high-end websites, mobile apps, and enterprise web platforms for teams worldwide.",
+    "RootPath is a lean digital engineering team for web, mobile, cloud, and technical strategy.",
 };
 
 export default function RootLayout({
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" data-theme="light" suppressHydrationWarning>
       <body
         className={cn(
           geist.variable,

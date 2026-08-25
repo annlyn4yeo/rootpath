@@ -1,13 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 
 const buttonVariants = {
   primary:
-    "border-accent bg-accent text-accent-foreground hover:bg-accent/90",
+    "border-accent bg-accent text-accent-foreground hover:-translate-y-px hover:bg-accent-strong hover:shadow-[0_10px_24px_rgb(var(--accent-rgb)/0.18)]",
   secondary:
     "border-border-strong bg-surface-elevated text-foreground hover:border-accent/60 hover:bg-surface",
   outline:
@@ -51,20 +50,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     return (
-      <motion.button
+      <button
         ref={ref}
         type={type}
         disabled={disabled}
-        whileHover={disabled ? undefined : { scale: 1.015 }}
-        whileTap={disabled ? undefined : { scale: 0.97 }}
-        transition={{
-          type: "spring",
-          stiffness: 420,
-          damping: 26,
-          mass: 0.55,
-        }}
         className={cn(
-          "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg border font-medium tracking-[-0.01em] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-45",
+          "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg border font-medium tracking-[-0.01em] outline-none transition-[background-color,border-color,box-shadow,transform] duration-150 ease-out active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-45",
           buttonVariants[variant],
           buttonSizes[size],
           className,
