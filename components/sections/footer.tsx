@@ -43,10 +43,7 @@ export function Footer() {
             <motion.a
               href="#process"
               whileHover={shouldReduceMotion ? undefined : "hover"}
-              whileTap={shouldReduceMotion ? undefined : { transform: "scale(0.98)" }}
-              initial="rest"
               variants={{ rest: {}, hover: {} }}
-              transition={spring}
               className="group mt-8 inline-flex items-center gap-2 rounded-lg border border-border-strong px-5 py-3 text-sm font-medium text-foreground outline-none transition-[background-color,border-color,transform] duration-150 ease-out hover:border-accent/60 hover:bg-surface focus-visible:ring-2 focus-visible:ring-accent/70"
             >
               See how we work

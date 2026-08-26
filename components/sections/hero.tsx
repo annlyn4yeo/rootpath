@@ -77,13 +77,8 @@ export function Hero() {
           </Button>
           <motion.a
             href="#services"
-            initial="rest"
             whileHover={shouldReduceMotion ? undefined : "hover"}
-            whileTap={
-              shouldReduceMotion ? undefined : { transform: "scale(0.98)" }
-            }
             variants={{ rest: {}, hover: {} }}
-            transition={spring}
             className="group inline-flex items-center gap-2 text-sm font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
           >
             Explore services
