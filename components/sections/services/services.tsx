@@ -12,6 +12,7 @@ import {
 } from "motion/react";
 
 import { GrowBand, GrowIn } from "@/components/motion/grow";
+import { PEEK_SVH } from "@/components/sections/hero/data";
 import { Magnetic } from "@/components/motion/magnetic";
 import { useMediaQuery } from "@/components/motion/use-media-query";
 import { services, type Service } from "@/components/sections/services/data";
@@ -64,7 +65,8 @@ export function Services() {
   });
 
   return (
-    <GrowBand>
+    // Its folded top already shows under the pinned hero, so it unfolds from that height.
+    <GrowBand unfoldFrom={100 - PEEK_SVH}>
       <section
         id="services"
         aria-labelledby="services-heading"

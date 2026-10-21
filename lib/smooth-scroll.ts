@@ -63,3 +63,34 @@ function scrollToY(target: number) {
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
 }
+
+/** Fast away, long settle: a step answers the input at once and eases onto its stop. */
+function easeOutQuart(t: number) {
+  return 1 - Math.pow(1 - t, 4);
+}
+
+/** Where the page is heading: the smooth-scroll target while one is running, else where it is. */
+export function scrollTarget() {
+  return getLenis()?.targetScroll ?? window.scrollY;
+}
+
+/**
+ * Moves the page to a scroll stop and holds other scrolling off until it lands, for scroll that
+ * advances in fixed steps.
+ */
+export function stepTo(target: number, duration: number) {
+  const top = Math.max(0, target);
+  const lenis = getLenis();
+
+  if (lenis) {
+    lenis.scrollTo(top, {
+      duration,
+      easing: easeOutQuart,
+      lock: true,
+      force: true,
+    });
+    return;
+  }
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  window.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+}

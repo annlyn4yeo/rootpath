@@ -79,13 +79,21 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Decides before first paint whether the hero plays its boot intro: once per session, and never for
+ * reduced motion or a deep link. It runs inline so a visitor who skips the intro never sees it flash.
+ * Without storage (or without JS) the attribute stays unset, which also skips it.
+ */
+const introScript = `try{var d=document.documentElement,s=sessionStorage;if(matchMedia("(prefers-reduced-motion: reduce)").matches||location.hash||s.getItem("rp-intro")){d.dataset.intro="skip"}else{d.dataset.intro="play";s.setItem("rp-intro","1")}}catch(e){}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // The intro script sets data-intro on <html> before hydration.
+    <html lang="en" suppressHydrationWarning>
       <body
         className={cn(
           display.variable,
@@ -94,6 +102,7 @@ export default function RootLayout({
           "min-h-[100dvh] overflow-x-hidden bg-background font-sans text-foreground antialiased",
         )}
       >
+        <script dangerouslySetInnerHTML={{ __html: introScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
