@@ -324,11 +324,12 @@ html[data-intro="play"] .hero-boot-inner {
   }
 }
 
-/* The Services band's folded top (GrowBand fully folded: inset 4.5% a side, rounded top corners).
-   It rises into place after the hero content, as the curtain clears. */
+/* The Services band's folded top, in GrowBand's fully folded shape (--fold-inset and
+   --fold-radius come from grow.tsx). It rises into place after the hero content. */
 .hero-peek {
   display: block;
-  border-radius: min(44px, 3.5svh) min(44px, 3.5svh) 0 0;
+  inset-inline: var(--fold-inset);
+  border-radius: var(--fold-radius) var(--fold-radius) 0 0;
   animation: hero-peek-in 1.1s var(--ease-out) calc(var(--intro) + 0.75s)
     backwards;
 }

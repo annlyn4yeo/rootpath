@@ -25,7 +25,7 @@ export const PIN_SCREENS = 1.3;
  * that strip itself, and the real band overlaps the hero by the same amount, so when the pin lets
  * go the real band lands exactly on the strip and carries on rising.
  */
-export const PEEK_SVH = 9;
+export const PEEK_SVH = 5;
 
 /** Depth into the pin, in screens, where statements two and three take over. */
 const SWITCH_AT = [0.4, 0.9] as const;

@@ -9,6 +9,7 @@ import {
   useTransform,
 } from "motion/react";
 
+import { FOLD_INSET, FOLD_RADIUS } from "@/components/motion/grow";
 import { Magnetic } from "@/components/motion/magnetic";
 import {
   PEEK_SVH,
@@ -104,7 +105,11 @@ function Boot() {
   );
 }
 
-function Statement({
+/**
+ * One statement as masked words of rolling letters. Memoised: a step only changes the `state` of
+ * two statements, and the caret's own updates should not rebuild every letter.
+ */
+const Statement = React.memo(function Statement({
   text,
   state,
   rise,
@@ -116,7 +121,7 @@ function Statement({
   rise: boolean;
   kerning: Kerning | null;
 }) {
-  const words = splitStatement(text);
+  const words = React.useMemo(() => splitStatement(text), [text]);
 
   return (
     <span className="hero-phrase block" data-state={state} aria-hidden="true">
@@ -164,41 +169,45 @@ function Statement({
       })}
     </span>
   );
-}
+});
 
 /** The name, with the brand-green bar for its hyphen. Its letters rise one after another. */
-const Name = React.forwardRef<HTMLParagraphElement, { kerning: Kerning | null }>(
-  function Name({ kerning }, ref) {
-    return (
-      <p ref={ref} aria-hidden="true" className="hero-name">
-        {NAME.map((word, w) => (
-          <React.Fragment key={word}>
-            {w > 0 ? (
-              <span
-                className="hero-name-letter hero-name-dash"
-                style={{ "--i": 4 } as React.CSSProperties}
-              />
-            ) : null}
-            {Array.from(word, (letter, l) => (
-              <span
-                key={l}
-                className="hero-name-letter"
-                style={
-                  {
-                    "--i": w * 5 + l,
-                    ...kernAfter(kerning, letter, word[l + 1]),
-                  } as React.CSSProperties
-                }
-              >
-                {letter}
-              </span>
-            ))}
-          </React.Fragment>
-        ))}
-      </p>
-    );
-  },
-);
+const Name = React.memo(function Name({
+  kerning,
+  ref,
+}: {
+  kerning: Kerning | null;
+  ref?: React.Ref<HTMLParagraphElement>;
+}) {
+  return (
+    <p ref={ref} aria-hidden="true" className="hero-name">
+      {NAME.map((word, w) => (
+        <React.Fragment key={word}>
+          {w > 0 ? (
+            <span
+              className="hero-name-letter hero-name-dash"
+              style={{ "--i": 4 } as React.CSSProperties}
+            />
+          ) : null}
+          {Array.from(word, (letter, l) => (
+            <span
+              key={l}
+              className="hero-name-letter"
+              style={
+                {
+                  "--i": w * 5 + l,
+                  ...kernAfter(kerning, letter, word[l + 1]),
+                } as React.CSSProperties
+              }
+            >
+              {letter}
+            </span>
+          ))}
+        </React.Fragment>
+      ))}
+    </p>
+  );
+});
 
 /**
  * A pinned, scroll-driven statement. The page boots like a terminal on the first visit, the
@@ -209,6 +218,7 @@ export function Hero() {
   const sectionRef = React.useRef<HTMLElement>(null);
   const slotRef = React.useRef<HTMLDivElement>(null);
   const nameRef = React.useRef<HTMLParagraphElement>(null);
+  const caretRef = React.useRef<HTMLSpanElement>(null);
   const shouldReduceMotion = useReducedMotion() ?? false;
 
   const [active, setActive] = React.useState(0);
@@ -289,10 +299,18 @@ export function Hero() {
     return () => cancelAnimationFrame(frame);
   }, [kerns, ends, caretReady]);
 
-  // Solid while the caret travels to a new statement, blinking again once it rests.
+  // Solid while the caret travels to a new statement, blinking again once it rests. How long the
+  // glide takes is read from its CSS transition, so the two never drift apart.
   React.useEffect(() => {
+    const element = caretRef.current;
+    if (!element) return;
+    const style = getComputedStyle(element);
+    const glideMs =
+      (Number.parseFloat(style.transitionDuration) +
+        Number.parseFloat(style.transitionDelay)) *
+      1000;
     setCaretMoving(true);
-    const timer = window.setTimeout(() => setCaretMoving(false), 1300);
+    const timer = window.setTimeout(() => setCaretMoving(false), glideMs);
     return () => window.clearTimeout(timer);
   }, [active]);
 
@@ -361,6 +379,7 @@ export function Hero() {
                 />
               ))}
               <span
+                ref={caretRef}
                 aria-hidden="true"
                 className="hero-cursor"
                 data-ready={caretReady && caret ? "" : undefined}
@@ -418,8 +437,14 @@ export function Hero() {
           tabIndex={-1}
           aria-hidden="true"
           data-surface="inverse"
-          className="hero-peek absolute inset-x-[4.5%] bottom-0"
-          style={{ height: `${PEEK_SVH}svh` }}
+          className="hero-peek absolute bottom-0"
+          style={
+            {
+              height: `${PEEK_SVH}svh`,
+              "--fold-inset": `${FOLD_INSET}%`,
+              "--fold-radius": FOLD_RADIUS,
+            } as React.CSSProperties
+          }
         />
       </div>
     </section>

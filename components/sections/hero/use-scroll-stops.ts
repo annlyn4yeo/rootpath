@@ -14,8 +14,6 @@ const WHEEL_SUSTAIN_MS = 1400;
 const SWIPE_PX = 10;
 /** Slack when comparing scroll positions with stops. */
 const SLACK = 4;
-/** The boot intro covers the page this long on a first visit; nothing scrolls under it. */
-const INTRO_MS = 2300;
 
 const KEYS_DOWN = new Set(["ArrowDown", "PageDown"]);
 const KEYS_UP = new Set(["ArrowUp", "PageUp"]);
@@ -53,8 +51,14 @@ export function useScrollStops(
     const section = sectionRef.current;
     if (!section) return;
 
-    const introUntil =
-      document.documentElement.dataset.intro === "play" ? INTRO_MS : 0;
+    // Nothing scrolls under the boot intro: input is held until its curtain finishes lifting.
+    let introPlaying = document.documentElement.dataset.intro === "play";
+    const boot = document.querySelector<HTMLElement>(".hero-boot");
+    const onBootEnd = (event: AnimationEvent) => {
+      if (event.animationName === "boot-lift") introPlaying = false;
+    };
+    if (introPlaying) boot?.addEventListener("animationend", onBootEnd);
+
     let busyUntil = 0;
     let lastStepAt = -Infinity;
     // After a step, the rest of the same gesture (a trackpad's inertia) is swallowed.
@@ -64,15 +68,20 @@ export function useScrollStops(
     let touch: { x: number; y: number; mode: "pending" | "steer" | "free"; stepped: boolean } | null =
       null;
 
-    const points = () => {
+    // Stop positions in page coordinates. Measured on resize rather than per wheel event, since
+    // the listeners see every scroll on the page and a layout read each time adds up.
+    let all: number[] = [];
+    const measure = () => {
       const top = section.getBoundingClientRect().top + window.scrollY;
-      return stops.map((stop) => Math.round(top + stop * window.innerHeight));
+      all = stops.map((stop) => Math.round(top + stop * window.innerHeight));
     };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(document.documentElement);
 
     /** The stop a move from the current position lands on, or null to let the page scroll. */
     const destination = (direction: number, distance: number) => {
       const y = scrollTarget();
-      const all = points();
       const first = all[0];
       const last = all[all.length - 1];
 
@@ -92,10 +101,7 @@ export function useScrollStops(
       stepTo(target, STEP_MS / 1000);
     };
 
-    const held = () => {
-      const now = performance.now();
-      return now < introUntil || now < busyUntil;
-    };
+    const held = () => introPlaying || performance.now() < busyUntil;
 
     const onWheel = (event: WheelEvent) => {
       if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
@@ -117,7 +123,7 @@ export function useScrollStops(
       };
 
       if (held()) {
-        if (swallowing || now < introUntil) take();
+        if (swallowing || introPlaying) take();
         return;
       }
       if (swallowing && !fresh) return take();
@@ -205,6 +211,8 @@ export function useScrollStops(
     window.addEventListener("keydown", onKeyDown, { capture: true });
 
     return () => {
+      boot?.removeEventListener("animationend", onBootEnd);
+      observer.disconnect();
       window.removeEventListener("wheel", onWheel, capture);
       window.removeEventListener("touchstart", onTouchStart, { capture: true });
       window.removeEventListener("touchmove", onTouchMove, capture);
