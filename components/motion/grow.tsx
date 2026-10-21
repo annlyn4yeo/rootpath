@@ -12,11 +12,22 @@ import {
 import { easeOutCubic } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
+/** A fully folded band: inset this percentage of the width on each side... */
+export const FOLD_INSET = 4.5;
+/** ...with corners rounded this much. Capped by viewport height, so the thin slice that shows
+    first still reads as a panel top with a flat edge, rather than two corners meeting. */
+export const FOLD_RADIUS = "min(44px, 3.5svh)";
+
 interface GrowBandProps {
   children: React.ReactNode;
   className?: string;
   /** Fold back in as the band's end leaves the viewport. Off for the last band on the page. */
   foldOut?: boolean;
+  /**
+   * How far down the viewport (percent) the band's top is when it starts to unfold. Above the
+   * default when something on screen already shows the band's folded top at that height.
+   */
+  unfoldFrom?: number;
 }
 
 /**
@@ -29,14 +40,15 @@ export function GrowBand({
   children,
   className,
   foldOut = true,
+  unfoldFrom = 95,
 }: GrowBandProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion() ?? false;
-  // Starts at 95% of the viewport, where the first band rests beneath the hero, so it sits
-  // fully folded on the first screen and unfolds from the first scroll.
+  // Starts with the band's top near the bottom of the viewport, so it is still fully folded as
+  // it comes into view and unfolds as it rises.
   const { scrollYProgress: enter } = useScroll({
     target: ref,
-    offset: ["start 95%", "start 18%"],
+    offset: [`start ${unfoldFrom}%`, "start 18%"] as never,
   });
   const { scrollYProgress: leave } = useScroll({
     target: ref,
@@ -48,10 +60,8 @@ export function GrowBand({
       1 - easeOutCubic(e),
       foldOut ? easeOutCubic(l) * 0.8 : 0,
     );
-    const inset = (fold * 4.5).toFixed(3);
-    // Capped by viewport height so the thin slice under the hero still reads as a panel top
-    // with a flat edge, rather than two corners meeting.
-    return `inset(0% ${inset}% 0% ${inset}% round calc(${fold.toFixed(3)} * min(44px, 3.5svh)))`;
+    const inset = (fold * FOLD_INSET).toFixed(3);
+    return `inset(0% ${inset}% 0% ${inset}% round calc(${fold.toFixed(3)} * ${FOLD_RADIUS}))`;
   });
 
   return (

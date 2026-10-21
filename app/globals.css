@@ -210,51 +210,307 @@ html.lenis {
   }
 }
 
-/* Kinetic headline: each word rises out of its own mask. */
-.kinetic-word {
+/* ---------- Hero ---------- */
+
+/*
+ * The boot intro plays once per session: an inline script in app/layout.tsx sets `data-intro` on
+ * <html> before first paint. Every hero entrance waits `--intro`, so the same sequence plays a
+ * beat after load when the boot is skipped.
+ */
+:root {
+  --intro: 0.1s;
+  --ease-lift: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-roll: cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+html[data-intro="play"] {
+  --intro: 1.45s;
+}
+
+.hero-boot {
+  display: none;
+}
+
+html[data-intro="play"] .hero-boot {
+  display: flex;
+  animation: boot-lift 1s var(--ease-lift) 1.3s forwards;
+}
+
+/* The curtain's trailing edge sags in the middle while it is pulled up, then flattens out. */
+html[data-intro="play"] .hero-boot::after {
+  content: "";
+  position: absolute;
+  top: calc(100% - 1px);
+  left: -10%;
+  width: 120%;
+  height: 18svh;
+  border-radius: 0 0 50% 50%;
+  background: inherit;
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  animation: boot-edge 1s var(--ease-lift) 1.3s forwards;
+}
+
+html[data-intro="play"] .hero-boot-inner {
+  animation: boot-inner-out 0.75s var(--ease-lift) 1.22s forwards;
+}
+
+@keyframes boot-lift {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+
+@keyframes boot-edge {
+  45% {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes boot-inner-out {
+  to {
+    opacity: 0;
+    transform: translateY(-3.5rem);
+  }
+}
+
+/* Typed command: the width grows one character per step (the font is monospaced). */
+.hero-type {
   display: inline-block;
   overflow: hidden;
+  white-space: pre;
   vertical-align: bottom;
-  padding-block: 0.06em 0.14em;
-  margin-block: -0.06em -0.14em;
+  width: 0;
+  animation: hero-type var(--type-duration) steps(var(--type-chars), end)
+    var(--type-delay) forwards;
 }
 
-.kinetic-inner {
+@keyframes hero-type {
+  to {
+    width: calc(var(--type-chars) * 1ch);
+  }
+}
+
+/* Solid while the command types, blinking once it waits. */
+.hero-boot-cursor {
   display: inline-block;
-  transform: translateY(108%);
-  animation: kinetic-rise 1s var(--ease-out) var(--kinetic-delay, 0s) forwards;
+  width: 0.6ch;
+  height: 1.15em;
+  margin-left: 0.2ch;
+  vertical-align: bottom;
+  background: currentColor;
+  animation: cursor-blink 1.1s steps(1) 1.15s infinite;
 }
 
-@keyframes kinetic-rise {
-  to {
-    transform: none;
+/* Statements share one grid cell. Each character rolls over a drum as its statement comes and
+   goes: upward while scrolling down, back down while scrolling up. */
+.hero-statement {
+  font-family: var(--font-root-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  /* Phones: two lines. "decisions." plus the caret is 4.8em and has to fit the column. */
+  font-size: min(20cqw, 20svh);
+  line-height: 0.88;
+  letter-spacing: -0.055em;
+}
+
+@media (min-width: 40rem) {
+  .hero-statement {
+    /* One line. "Faster decisions." plus the caret is 7.8em, about 95% of the column here. */
+    font-size: min(12.2cqw, 17svh);
   }
 }
 
-/* Hero highlighter: a marker stroke wipes in behind a phrase. A background rather than a
-   pseudo-element, so a phrase that wraps gets its own stroke on every line. */
-.hl {
-  background-image: linear-gradient(var(--hl-color), var(--hl-color));
-  background-repeat: no-repeat;
-  background-position: 0 0.62em;
-  background-size: 0% 0.4em;
-  -webkit-box-decoration-break: clone;
-  box-decoration-break: clone;
-  animation: hl-in 0.9s var(--ease-out) var(--hl-delay, 0s) forwards;
+/* The Services band's folded top, in GrowBand's fully folded shape (--fold-inset and
+   --fold-radius come from grow.tsx). It rises into place after the hero content. */
+.hero-peek {
+  display: block;
+  inset-inline: var(--fold-inset);
+  border-radius: var(--fold-radius) var(--fold-radius) 0 0;
+  animation: hero-peek-in 1.1s var(--ease-out) calc(var(--intro) + 0.75s)
+    backwards;
 }
 
-.hl-green {
-  --hl-color: rgb(167 196 176 / 0.55);
-}
-
-.hl-grey {
-  --hl-color: rgb(11 15 14 / 0.06);
-}
-
-@keyframes hl-in {
-  to {
-    background-size: 100% 0.4em;
+@keyframes hero-peek-in {
+  from {
+    transform: translateY(100%);
   }
+}
+
+/* A soft, static sage light behind the statement: depth without texture or motion. */
+.hero-light {
+  background: radial-gradient(
+    ellipse 52% 46% at 50% 46%,
+    rgb(167 196 176 / 0.22),
+    transparent 72%
+  );
+}
+
+.hero-slot {
+  position: relative;
+  display: grid;
+  align-items: end;
+}
+
+.hero-phrase {
+  grid-area: 1 / 1;
+}
+
+.hero-phrase:not([data-state="active"]) {
+  user-select: none;
+}
+
+.hero-word {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: top;
+  padding-block: 0.12em 0.14em;
+  margin-block: -0.12em -0.14em;
+}
+
+/* The caret hangs off the end of the last line. Reserving its width (0.42em plus a 0.07em gap)
+   at the line's end centres the line and caret together, not the line alone. */
+.hero-word[data-last] {
+  padding-inline-end: 0.49em;
+}
+
+.hero-rise {
+  display: inline-block;
+}
+
+/* Each line swings up out of its mask, levelling off as it lands. */
+.hero-rise[data-rise] {
+  transform-origin: 0% 100%;
+  animation: hero-rise 1.3s var(--ease-out)
+    calc(var(--intro) + var(--rise-delay, 0s)) backwards;
+}
+
+@keyframes hero-rise {
+  from {
+    transform: translateY(110%) rotate(4deg);
+  }
+}
+
+.hero-char {
+  display: inline-block;
+  transform-origin: 50% 50% -0.5em;
+  /* Past 90 degrees a letter is on the far side of the drum, so its mirrored back never shows. */
+  backface-visibility: hidden;
+  transition:
+    transform 1s var(--ease-roll) calc(var(--i) * 26ms),
+    opacity 0.5s var(--ease-out) calc(var(--i) * 26ms);
+}
+
+.hero-phrase[data-state="active"] .hero-char {
+  transform: perspective(7em) rotateX(0deg);
+  transition-delay: calc(var(--i) * 26ms + 90ms);
+}
+
+.hero-phrase[data-state="before"] .hero-char {
+  opacity: 0;
+  transform: perspective(7em) rotateX(-100deg);
+}
+
+.hero-phrase[data-state="after"] .hero-char {
+  opacity: 0;
+  transform: perspective(7em) rotateX(100deg);
+}
+
+/* The brand underscore as a caret. It glides to the end of each new statement, solid while it
+   travels and blinking once it rests. */
+.hero-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.42em;
+  height: 0.085em;
+  transition: transform 1.05s var(--ease-in-out) 0.15s;
+  animation: hero-fade 0.6s var(--ease-out) calc(var(--intro) + 0.95s)
+    backwards;
+}
+
+.hero-cursor > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  animation: cursor-blink 1.1s steps(1) infinite;
+}
+
+.hero-cursor[data-moving] > span {
+  animation: none;
+}
+
+.hero-cursor:not([data-ready]) {
+  visibility: hidden;
+  transition: none;
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+.hero-caption {
+  grid-area: 1 / 1;
+  transition:
+    opacity 0.45s var(--ease-out),
+    transform 0.7s var(--ease-out),
+    filter 0.45s var(--ease-out);
+}
+
+.hero-caption[data-state="active"] {
+  transition-delay: 0.28s;
+}
+
+.hero-caption[data-state="before"] {
+  opacity: 0;
+  transform: translateY(0.75rem);
+  filter: blur(4px);
+}
+
+.hero-caption[data-state="after"] {
+  opacity: 0;
+  transform: translateY(-0.75rem);
+  filter: blur(4px);
+}
+
+/* The name sits above the statement, with the brand-green bar for its hyphen. Its letters rise
+   out of a mask one after another as the hero enters. */
+.hero-name {
+  font-family: var(--font-root-display), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.625rem, min(2.6vw, 4.6svh), 2.5rem);
+  line-height: 1;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  overflow: hidden;
+  padding-block: 0.1em;
+  margin-block: -0.1em;
+}
+
+.hero-name-letter {
+  display: inline-block;
+  animation: hero-name-rise 1.1s var(--ease-out)
+    calc(var(--intro) + var(--i) * 35ms) backwards;
+}
+
+@keyframes hero-name-rise {
+  from {
+    transform: translateY(110%);
+  }
+}
+
+.hero-name-dash {
+  width: 0.28em;
+  height: 0.09em;
+  margin-inline: 0.05em 0.07em;
+  vertical-align: 0.26em;
+  background: var(--accent);
 }
 
 /* Diagram routes: a short signal travels each route once it is drawn. */
@@ -411,14 +667,35 @@ a {
   }
 
   .load-in,
-  .kinetic-inner {
+  .hero-rise[data-rise],
+  .hero-name-letter,
+  .hero-cursor,
+  .hero-cursor > span {
     animation: none;
     opacity: 1;
     transform: none;
   }
 
-  .hl {
+  /* Statements and captions cross-fade in place instead of rolling or sliding. */
+  .hero-phrase[data-state] .hero-char {
+    transform: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .hero-caption[data-state] {
+    transform: none;
+    filter: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .hero-cursor {
+    transition: none;
+  }
+
+  /* The band does not fold with reduced motion, so its top is full width and square. */
+  .hero-peek {
+    inset-inline: 0;
+    border-radius: 0;
     animation: none;
-    background-size: 100% 0.4em;
   }
 }

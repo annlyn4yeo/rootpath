@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Contact } from "@/components/sections/contact";
 import { Engagements } from "@/components/sections/engagements/engagements";
 import { Footer } from "@/components/sections/footer";
-import { Hero } from "@/components/sections/hero";
+import { Hero } from "@/components/sections/hero/hero";
 import { Navbar } from "@/components/sections/navbar";
 import { Process } from "@/components/sections/process/process";
 import { Services } from "@/components/sections/services/services";

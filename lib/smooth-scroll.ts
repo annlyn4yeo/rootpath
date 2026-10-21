@@ -47,19 +47,55 @@ export function scrollToElement(element: HTMLElement) {
   scrollToY(layoutTop(element) - padding - margin);
 }
 
-/** Glides the page to an absolute scroll position, with the same pacing as `scrollToElement`. */
-function scrollToY(target: number) {
+interface Glide {
+  duration: number;
+  easing: (t: number) => number;
+  /** Hold off user scrolling until the glide lands. */
+  lock?: boolean;
+}
+
+/**
+ * Glides the page to an absolute scroll position. Always forced, so an in-page link or CTA still
+ * goes even while a scroll step is holding the page. Without smooth scrolling (reduced motion, or
+ * before it loads) the browser scrolls natively.
+ */
+function glide(target: number, options: (distance: number) => Glide) {
   const top = Math.max(0, target);
   const lenis = getLenis();
 
   if (lenis) {
-    const distance = Math.abs(top - window.scrollY);
     lenis.scrollTo(top, {
-      duration: Math.min(2.4, 0.8 + distance / 2800),
-      easing: easeInOutCubic,
+      ...options(Math.abs(top - window.scrollY)),
+      force: true,
     });
     return;
   }
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({ top, behavior: reduce ? "auto" : "smooth" });
+}
+
+/** Glides the page to an absolute scroll position, with the same pacing as `scrollToElement`. */
+function scrollToY(target: number) {
+  glide(target, (distance) => ({
+    duration: Math.min(2.4, 0.8 + distance / 2800),
+    easing: easeInOutCubic,
+  }));
+}
+
+/** Fast away, long settle: a step answers the input at once and eases onto its stop. */
+function easeOutQuart(t: number) {
+  return 1 - Math.pow(1 - t, 4);
+}
+
+/** Where the page is heading: the smooth-scroll target while one is running, else where it is. */
+export function scrollTarget() {
+  return getLenis()?.targetScroll ?? window.scrollY;
+}
+
+/**
+ * Moves the page to a scroll stop and holds other scrolling off until it lands, for scroll that
+ * advances in fixed steps.
+ */
+export function stepTo(target: number, duration: number) {
+  glide(target, () => ({ duration, easing: easeOutQuart, lock: true }));
 }
