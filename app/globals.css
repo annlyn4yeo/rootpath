@@ -150,21 +150,13 @@ h3 {
   opacity: 0.55;
 }
 
-/* Terminal grid motif from the brand book hero: faint grid, masked toward one corner. */
-.grid-motif {
-  background-image:
-    linear-gradient(rgb(var(--accent-rgb) / 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(var(--accent-rgb) / 0.07) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(
-    ellipse 80% 70% at 30% 40%,
-    #000 30%,
-    transparent 75%
-  );
-  mask-image: radial-gradient(
-    ellipse 80% 70% at 30% 40%,
-    #000 30%,
-    transparent 75%
+/* The footer's closing light: a soft sage glow from the top left, for quiet depth on the dark
+   band without a pattern. */
+.footer-light {
+  background-image: radial-gradient(
+    ellipse 60% 55% at 18% 0%,
+    rgb(167 196 176 / 0.09),
+    transparent 70%
   );
 }
 
