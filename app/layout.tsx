@@ -4,9 +4,11 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import {
   OG_IMAGE,
   SITE_DESCRIPTION,
+  SITE_KEYWORDS,
   SITE_NAME,
   SITE_TITLE,
   SITE_URL,
+  SITE_VERIFICATION,
   getJsonLd,
 } from "@/lib/seo";
 import { cn } from "@/lib/utils";
@@ -50,7 +52,20 @@ export const metadata: Metadata = {
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
+  // Google ignores this tag; Bing and some smaller engines still read it.
+  keywords: SITE_KEYWORDS,
   applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "technology",
+  // Only rendered when the build sets a token (see README).
+  verification: {
+    google: SITE_VERIFICATION.google,
+    other: SITE_VERIFICATION.bing
+      ? { "msvalidate.01": SITE_VERIFICATION.bing }
+      : undefined,
+  },
   robots: {
     index: true,
     follow: true,
