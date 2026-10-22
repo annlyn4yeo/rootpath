@@ -43,8 +43,10 @@ scripts/      One-off build tooling
 | Variable | Purpose | Default |
 |----------|---------|---------|
 | `NEXT_PUBLIC_SITE_URL` | Canonical site URL used for SEO metadata and the sitemap | `https://root-path.tech` |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console verification token, rendered as a meta tag | unset |
+| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | Bing Webmaster Tools verification token (`msvalidate.01`) | unset |
 
-Site title, description and contact details live in `lib/seo.ts` and `lib/contact.ts`.
+Site title, description, keyword targets, structured data and contact details live in `lib/seo.ts` and `lib/contact.ts`. `/llms.txt` (a plain-text summary for AI assistants) is generated from the section data in `app/llms.txt/route.ts`.
 
 ## Deployment
 

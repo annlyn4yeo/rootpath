@@ -332,7 +332,8 @@ export function Hero() {
     >
       <Boot />
       <h1 id="hero-heading" className="sr-only">
-        Root-Path. Small team. Direct access. Faster decisions.
+        Root-Path: web, mobile &amp; cloud engineering. Small team. Direct
+        access. Faster decisions.
       </h1>
 
       <div className="sticky top-0 h-[100svh] overflow-hidden">
